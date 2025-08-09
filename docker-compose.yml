@@ -1,0 +1,44 @@
+services:
+  odoo:
+    build: .
+    container_name: odoo
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${ODOO_PORT}:8069"
+    volumes:
+      - ./odoo:/opt/odoo
+      - ./custom_modules:/mnt/extra-addons
+      - ./conf:/etc/odoo
+      - odoo_data:/var/lib/odoo
+      - ./logs:/var/log/odoo
+    networks:
+      - odoo_network
+    restart: always
+
+  db:
+    image: postgres:17
+    container_name: synerp_postgres
+    env_file: .env
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - odoo_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgresql_data:
+  odoo_data:
+
+networks:
+  odoo_network:
+    driver: bridge
