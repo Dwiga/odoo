@@ -9,7 +9,7 @@ services:
     ports:
       - "${ODOO_PORT}:8069"
     volumes:
-      - "./odoo:/opt/odoo"
+      - "./odoo:/opt/odoo/odoo"
       - "./custom_modules:/mnt/extra-addons"
       - "./conf:/etc/odoo"
       - "./odoo_data:/var/lib/odoo"
