@@ -9,11 +9,10 @@ services:
     ports:
       - "${ODOO_PORT}:8069"
     volumes:
-      - ./odoo:/opt/odoo
-      - ./custom_modules:/mnt/extra-addons
-      - ./conf:/etc/odoo
-      - odoo_data:/var/lib/odoo
-      - ./logs:/var/log/odoo
+      - "./odoo:/opt/odoo"
+      - "./custom_modules:/mnt/extra-addons"
+      - "./conf:/etc/odoo"
+      - "./odoo_data:/var/lib/odoo"
     networks:
       - odoo_network
     restart: always
