@@ -2,12 +2,10 @@ services:
   odoo:
     build: .
     container_name: odoo
-    env_file: .env
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     ports:
-      - "${ODOO_PORT}:8069"
+      - "8069:8069"
     volumes:
       - "./odoo:/opt/odoo/odoo"
       - "./custom_modules:/mnt/extra-addons"
@@ -16,26 +14,36 @@ services:
     networks:
       - odoo_network
     restart: always
+    command: ["python", "odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
 
   db:
     image: postgres:17
-    container_name: synerp_postgres
-    env_file: .env
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=odoo
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_INITDB_ARGS=--auth-host=trust --auth-local=trust
+      - PGDATA=/var/lib/postgresql/data/pgdata
+
     volumes:
-      - postgresql_data:/var/lib/postgresql/data/pgdata
+      # - ./postgresql_data:/var/lib/postgresql/data/pgdata
+      - pgdata:/var/lib/postgresql/data/pgdata
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5432:5432"
     networks:
       - odoo_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+
 volumes:
-  postgresql_data:
+  pgdata:
   odoo_data:
 
 networks:

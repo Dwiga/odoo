@@ -17,7 +17,6 @@ RUN apt-get update && \
     libjpeg-dev \
     liblcms2-dev \
     libblas-dev \
-    libatlas-base-dev \
     git \
     npm \
     && apt-get clean
@@ -43,4 +42,4 @@ EXPOSE 8069
 ENV ODOO_CONFIG=/etc/odoo/odoo.conf
 
 # Start Odoo using the same command that works locally
-CMD ["python", "odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf"]
+CMD ["python", "odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
