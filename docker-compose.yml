@@ -1,35 +1,9 @@
 services:
-  postgres:
-    container_name: odoo-postgres
-    image: postgres:17.6-alpine
-    networks:
-      - odoo_network
-    ports:
-      - "5432:5432"
-    environment:
-      # POSTGRES_DB: odoo
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: odoo
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   odoo:
     container_name: odoo
     build: .
     networks:
       - odoo_network
-    environment:
-      HOST: postgres
-      USER: odoo
-      PASSWORD: odoo
-    depends_on:
-      - postgres
     ports:
       - "8069:8069"
     volumes:
@@ -38,11 +12,9 @@ services:
       - "./conf:/etc/odoo"
       - "./odoo_data:/var/lib/odoo"
     restart: always
-    command: ["python", "odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
-
+    command: ["python", "/opt/odoo/odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
 
 volumes:
-  pgdata:
   odoo_data:
 
 networks:
