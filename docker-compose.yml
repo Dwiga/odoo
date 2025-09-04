@@ -12,7 +12,7 @@ services:
       - "./conf:/etc/odoo"
       - "./odoo_data:/var/lib/odoo"
     restart: always
-    command: ["python", "/opt/odoo/odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
+    command: ["python", "odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
 
 volumes:
   odoo_data:
