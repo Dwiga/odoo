@@ -38,5 +38,5 @@ EXPOSE 8069
 # Set environment variables for Odoo
 ENV ODOO_CONFIG=/etc/odoo/odoo.conf
 
-# Start Odoo using the correct path
-CMD ["python", "odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
+# Start Odoo using the correct path (matches compose: ./odoo -> /opt/odoo)
+CMD ["python", "odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
