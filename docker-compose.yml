@@ -7,12 +7,12 @@ services:
     ports:
       - "8069:8069"
     volumes:
-      - "./odoo:/opt/odoo/odoo"
+      - "./odoo:/opt/odoo"
       - "./custom_modules:/mnt/extra-addons"
       - "./conf:/etc/odoo"
-      - "./odoo_data:/var/lib/odoo"
+      - "odoo_data:/var/lib/odoo"
     restart: always
-    command: ["python", "odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
+    command: ["python", "odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
 
 volumes:
   odoo_data:
