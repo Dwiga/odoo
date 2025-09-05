@@ -25,7 +25,7 @@ RUN apt-get update && \
 RUN mkdir -p /var/lib/odoo /var/log/odoo
 
 # Copy requirements file first for better Docker layer caching
-COPY ./requirements.txt /tmp/requirements.txt
+COPY ./odoo/requirements.txt /tmp/requirements.txt
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
