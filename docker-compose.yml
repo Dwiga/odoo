@@ -1,22 +1,28 @@
 services:
+  # Odoo Application
   odoo:
-    container_name: odoo
     build: .
-    networks:
-      - odoo_network
+    container_name: odoo_app
+    environment:
+      # Set your external database connection details here
+      - HOST=your_db_host
+      - USER=your_db_user
+      - PASSWORD=your_db_password
+    volumes:
+      # Mount your local Odoo source code
+      - ./odoo:/opt/odoo/odoo
+      # Mount configuration file
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      # Mount custom addons
+      - ./addons:/mnt/extra-addons
+      # Mount data directory for file storage
+      - odoo_data:/var/lib/odoo
+      # Mount logs
+      - ./logs:/var/log/odoo
     ports:
       - "8069:8069"
-    volumes:
-      - "./odoo:/opt/odoo"
-      - "./custom_modules:/mnt/extra-addons"
-      - "./conf:/etc/odoo"
-      - "odoo_data:/var/lib/odoo"
-    restart: always
-    command: ["python", "odoo-bin", "-c", "/etc/odoo/odoo.conf", "-i", "base"]
+    restart: unless-stopped
+    network_mode: host  # Use host network to access external database
 
 volumes:
   odoo_data:
-
-networks:
-  odoo_network:
-    driver: bridge
