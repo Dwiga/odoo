@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # Odoo Application
   odoo:
@@ -5,16 +7,14 @@ services:
     container_name: odoo_app
     environment:
       # Set your external database connection details here
-      - HOST=your_db_host
-      - USER=your_db_user
-      - PASSWORD=your_db_password
+      - HOST=primary.odoodb--q9b4md8jjy66.addon.code.run
+      - USER=_6a1dd2fcee051634
+      - PASSWORD=_184a51919caa8c9246a1eb078f8166
     volumes:
-      # Mount your local Odoo source code
-      - ./odoo:/opt/odoo/odoo
+      # Mount the entire project directory (including odoo-bin)
+      - .:/opt/odoo
       # Mount configuration file
-      - ./config/odoo.conf:/etc/odoo/odoo.conf
-      # Mount custom addons
-      - ./addons:/mnt/extra-addons
+      - ./conf/odoo.conf:/etc/odoo/odoo.conf
       # Mount data directory for file storage
       - odoo_data:/var/lib/odoo
       # Mount logs
