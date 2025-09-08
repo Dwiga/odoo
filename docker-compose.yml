@@ -1,26 +1,53 @@
-version: '3.8'
-
 services:
   odoo:
-    container_name: odoo
-    build: .
-    working_dir: /opt/odoo
-    ports:
-      - "8069:8069"
-    volumes:
-      - ./odoo:/opt/odoo
-      - ./custom_modules:/mnt/extra-addons
-      - ./conf/odoo.conf:/etc/odoo/odoo.conf
-      - odoo_data:/var/lib/odoo
-      - ./logs:/var/log/odoo
+    image: iterativodo/dockerdoo:${ODOO_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - ODOO_VERSION=${ODOO_VERSION}
+        - PYTHON_VERSION=${PYTHON_VERSION}
+        - OS_VARIANT=${OS_VARIANT}
+        - WKHTMLTOX_VERSION=${WKHTMLTOX_VERSION}
+    env_file: .env
+    
     restart: unless-stopped
-    command: ["python", "odoo-bin", "-c", "/etc/odoo/odoo.conf"]
-    networks:
-      - odoo_network
+
+    ports:
+      - 8069:8069
+      - 8072:8072
+
+    volumes:
+      # Host paths (.ssh configuration)
+      - ~/.ssh/:/opt/odoo/.ssh/:cached
+      # Named volumes
+      - odoo-data:${ODOO_DATA_DIR}
+      - odoo-testlogs:${ODOO_LOGS_DIR}
+      - odoo-modules:${ODOO_EXTRA_ADDONS}
+    depends_on:
+      db:
+        condition: service_healthy
+  # ------------------------
+  db:
+    image: postgres:${PSQL_VERSION}
+    restart: always
+    volumes:
+      - psql:/var/lib/postgresql/data/pgdata
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      # Odoo expects the database to be created with the C collate
+      - POSTGRES_INITDB_ARGS=--lc-collate=C
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
-  odoo_data:
-
-networks:
-  odoo_network:
-    driver: bridge
+  odoo-data:
+  odoo-testlogs:
+  odoo-modules:
+  psql:
