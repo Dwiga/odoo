@@ -1,6 +1,6 @@
 services:
   odoo:
-    image: iterativodo/dockerdoo:${ODOO_VERSION}
+    image: iterativodo/dockerdoo:18
     build:
       context: .
       dockerfile: Dockerfile
@@ -29,7 +29,7 @@ services:
         condition: service_healthy
   # ------------------------
   db:
-    image: postgres:${PSQL_VERSION}
+    image: postgres:17
     restart: always
     volumes:
       - psql:/var/lib/postgresql/data/pgdata
