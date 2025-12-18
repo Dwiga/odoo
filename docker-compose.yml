@@ -24,6 +24,8 @@ services:
       - odoo-data:${ODOO_DATA_DIR}
       - odoo-testlogs:${ODOO_LOGS_DIR}
       - odoo-modules:${ODOO_EXTRA_ADDONS}
+      # Addons from the repository
+      - ./addons:/mnt/extra-addons
     depends_on:
       db:
         condition: service_healthy
